@@ -1,6 +1,7 @@
 package com.chengshiun.securityMemberManagerSystem.dao;
 
 import com.chengshiun.securityMemberManagerSystem.dto.MemberRegisterRequest;
+import com.chengshiun.securityMemberManagerSystem.dto.MemberUpdateRequest;
 import com.chengshiun.securityMemberManagerSystem.model.Member;
 import com.chengshiun.securityMemberManagerSystem.rowmapper.MemberRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,10 @@ public class MemberDaoImpl implements MemberDao{
     @Override
     public Member getMemberById(Integer memberId) {
         String sql = """
-                SELECT member_id, email, password, name, age FROM member WHERE member_id = :memberId
+                SELECT member.member_id, member.email, member.password, member.name, member.age, role.role_name FROM member
+                JOIN member_has_role ON member.member_id = member_has_role.member_id
+                JOIN role ON member_has_role.role_id = role.role_id
+                WHERE member.member_id = :memberId
                 """;
         Map<String, Object> map = new HashMap<>();
         map.put("memberId", memberId);
@@ -73,10 +77,29 @@ public class MemberDaoImpl implements MemberDao{
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(), keyHolder);
+        namedParameterJdbcTemplate.update(sql, new MapSqlParameterSource(map), keyHolder);
 
         int memberId = keyHolder.getKey().intValue();
 
         return memberId;
+    }
+
+    @Override
+    public Member updateMember(Integer memberId, MemberUpdateRequest memberUpdateRequest) {
+        String sql = """
+                UPDATE member
+                SET password = :password, name = :name, age = :age
+                WHERE member_id = :memberId
+                """;
+        Map<String, Object> map = new HashMap<>();
+        map.put("password", memberUpdateRequest.getPassword());
+        map.put("name", memberUpdateRequest.getName());
+        map.put("age", memberUpdateRequest.getAge());
+        map.put("memberId", memberId);
+
+        namedParameterJdbcTemplate.update(sql, map);
+
+        //回傳更新後的數據給前端
+        return getMemberById(memberId);
     }
 }

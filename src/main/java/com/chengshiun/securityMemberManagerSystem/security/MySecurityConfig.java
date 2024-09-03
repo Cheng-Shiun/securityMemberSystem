@@ -33,16 +33,18 @@ public class MySecurityConfig {
     //使用 InMemory 創建使用者帳號
     @Bean
     public InMemoryUserDetailsManager userDetailsManager() {
+        PasswordEncoder encoder = passwordEncoder();
+
         UserDetails userTest1 = User
-                .withUsername("test1")
-                .password("{noop}111")
-                .roles("ADMIN", "USER")
+                .withUsername("admin")
+                .password(encoder.encode("111"))
+                .roles("ADMIN", "NORMAL_MEMBER")
                 .build();
 
         UserDetails userTest2 = User
-                .withUsername("test2")
-                .password("{noop}222")
-                .roles("USER")
+                .withUsername("test")
+                .password(encoder.encode("222"))
+                .roles("NORMAL_MEMBER")
                 .build();
 
         return new InMemoryUserDetailsManager(userTest1, userTest2);
@@ -59,6 +61,7 @@ public class MySecurityConfig {
 
                 //設定 CSRF 保護
                 .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/member/register")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(createCsrfHandler())
                 )
@@ -68,7 +71,8 @@ public class MySecurityConfig {
                 //設定 api 訪問是否認證
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/member/register").permitAll()
-                        .requestMatchers("/welcome").hasRole("ADMIN")
+                        .requestMatchers("/member/getMember/*").hasRole("ADMIN")
+                        .requestMatchers("hello", "/member/update/*").hasAnyRole("ADMIN", "NORMAL_MEMBER", "VIP_MEMBER")
                         .anyRequest().authenticated()
                 )
 

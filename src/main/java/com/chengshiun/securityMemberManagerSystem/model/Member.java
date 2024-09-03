@@ -1,11 +1,19 @@
 package com.chengshiun.securityMemberManagerSystem.model;
 
+import com.chengshiun.securityMemberManagerSystem.constant.MemberRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Member {
     private Integer memberId;
     private String email;
+
+    @JsonIgnore
     private String password;
+
     private String name;
     private Integer age;
+
+    private MemberRole role;
 
     public Integer getMemberId() {
         return memberId;
@@ -45,5 +53,13 @@ public class Member {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public MemberRole getRole() {
+        return role;
+    }
+
+    public void setRole(MemberRole role) {
+        this.role = role;
     }
 }
