@@ -45,11 +45,12 @@ public class MySecurityConfig {
                 )
 
                 //設定 CSRF 保護
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/member/register")
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                        .csrfTokenRequestHandler(createCsrfHandler())
-                )
+//                .csrf(csrf -> csrf
+//                        .ignoringRequestMatchers("/member/register")
+//                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                        .csrfTokenRequestHandler(createCsrfHandler())
+//                )
+                .csrf(csrf -> csrf.disable())
 
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults())

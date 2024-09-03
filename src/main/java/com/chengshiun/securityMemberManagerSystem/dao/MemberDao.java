@@ -3,6 +3,9 @@ package com.chengshiun.securityMemberManagerSystem.dao;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberRegisterRequest;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberUpdateRequest;
 import com.chengshiun.securityMemberManagerSystem.model.Member;
+import com.chengshiun.securityMemberManagerSystem.model.Role;
+
+import java.util.List;
 
 public interface MemberDao {
 
@@ -13,4 +16,6 @@ public interface MemberDao {
     Integer createMember(MemberRegisterRequest memberRegisterRequest);
 
     Member updateMember(Integer memberId, MemberUpdateRequest memberUpdateRequest);
+
+    List<Role> getRolesByMemberId(Integer memberId);
 }

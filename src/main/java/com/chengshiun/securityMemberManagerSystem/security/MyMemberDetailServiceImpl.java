@@ -2,6 +2,7 @@ package com.chengshiun.securityMemberManagerSystem.security;
 
 import com.chengshiun.securityMemberManagerSystem.dao.MemberDao;
 import com.chengshiun.securityMemberManagerSystem.model.Member;
+import com.chengshiun.securityMemberManagerSystem.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,16 +32,30 @@ public class MyMemberDetailServiceImpl implements UserDetailsService {
         if (member == null) {
             throw new UsernameNotFoundException("Member not found for " + username);
         } else {
+            //帳號密碼
             String memberEmail = member.getEmail();
             String memberPassword = member.getPassword();
 
             //權限
-            List<GrantedAuthority> authorities = member.getRoles().stream()
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name())) // 直接使用 role.name()
-                    .collect(Collectors.toList());
+            List<Role> roleList = memberDao.getRolesByMemberId(member.getMemberId());
+
+            //使用自定義轉換方法 存取權限
+            List<GrantedAuthority> memberAuthorities = convertToAuthorities(roleList);
+
 
             //該方法預設是返回 Spring Security 指定的 User 格式(帳號, 密碼, 權限)
-            return new User(memberEmail, memberPassword, authorities);
+            return new User(memberEmail, memberPassword, memberAuthorities);
         }
+    }
+
+    //自定義ArrayList 轉換成 Authority 格式
+    private List<GrantedAuthority> convertToAuthorities(List<Role> roleList) {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        for (Role role : roleList) {
+            //將查找出來的role_name都轉換成 GrantedAuthority 類
+            authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
+        }
+        return authorities;
     }
 }

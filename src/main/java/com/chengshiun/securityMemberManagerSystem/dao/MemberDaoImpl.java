@@ -3,7 +3,9 @@ package com.chengshiun.securityMemberManagerSystem.dao;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberRegisterRequest;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberUpdateRequest;
 import com.chengshiun.securityMemberManagerSystem.model.Member;
+import com.chengshiun.securityMemberManagerSystem.model.Role;
 import com.chengshiun.securityMemberManagerSystem.rowmapper.MemberRowMapper;
+import com.chengshiun.securityMemberManagerSystem.rowmapper.RoleRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -23,6 +25,9 @@ public class MemberDaoImpl implements MemberDao{
 
     @Autowired
     private MemberRowMapper memberRowMapper;
+
+    @Autowired
+    private RoleRowMapper roleRowMapper;
 
     @Override
     public Member getMemberById(Integer memberId) {
@@ -104,5 +109,21 @@ public class MemberDaoImpl implements MemberDao{
 
         //回傳更新後的數據給前端
         return getMemberById(memberId);
+    }
+
+    @Override
+    public List<Role> getRolesByMemberId(Integer memberId) {
+        String sql = """
+                SELECT role.role_id, role.role_name FROM role
+                    JOIN member_has_role ON role.role_id = member_has_role.role_id
+                    WHERE member_has_role.member_id = :memberId
+                """;
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("memberId", memberId);
+
+        List<Role> roleList = namedParameterJdbcTemplate.query(sql, map, roleRowMapper);
+
+        return roleList;
     }
 }
