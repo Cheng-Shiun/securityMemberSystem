@@ -47,7 +47,10 @@ public class MemberDaoImpl implements MemberDao{
     @Override
     public Member getMemberByEmail(String email) {
         String sql = """
-                SELECT member_id, email, password, name, age FROM member WHERE email = :email
+                SELECT member.member_id, member.email, member.password, member.name, member.age, role.role_name FROM member
+                JOIN member_has_role ON member.member_id = member_has_role.member_id
+                JOIN role ON member_has_role.role_id = role.role_id
+                WHERE member.email = :email
                 """;
 
         Map<String, Object> map = new HashMap<>();

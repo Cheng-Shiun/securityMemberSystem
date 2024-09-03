@@ -1,13 +1,17 @@
 package com.chengshiun.securityMemberManagerSystem.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -30,25 +34,6 @@ public class MySecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    //使用 InMemory 創建使用者帳號
-    @Bean
-    public InMemoryUserDetailsManager userDetailsManager() {
-        PasswordEncoder encoder = passwordEncoder();
-
-        UserDetails userTest1 = User
-                .withUsername("admin")
-                .password(encoder.encode("111"))
-                .roles("ADMIN", "NORMAL_MEMBER")
-                .build();
-
-        UserDetails userTest2 = User
-                .withUsername("test")
-                .password(encoder.encode("222"))
-                .roles("NORMAL_MEMBER")
-                .build();
-
-        return new InMemoryUserDetailsManager(userTest1, userTest2);
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -65,6 +50,7 @@ public class MySecurityConfig {
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(createCsrfHandler())
                 )
+
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults())
 
@@ -72,7 +58,7 @@ public class MySecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/member/register").permitAll()
                         .requestMatchers("/member/getMember/*").hasRole("ADMIN")
-                        .requestMatchers("hello", "/member/update/*").hasAnyRole("ADMIN", "NORMAL_MEMBER", "VIP_MEMBER")
+                        .requestMatchers( "/member/update/*").hasAnyRole("ADMIN", "NORMAL_MEMBER", "VIP_MEMBER")
                         .anyRequest().authenticated()
                 )
 

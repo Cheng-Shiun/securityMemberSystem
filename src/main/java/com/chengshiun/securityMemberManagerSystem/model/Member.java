@@ -3,6 +3,8 @@ package com.chengshiun.securityMemberManagerSystem.model;
 import com.chengshiun.securityMemberManagerSystem.constant.MemberRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.Set;
+
 public class Member {
     private Integer memberId;
     private String email;
@@ -13,7 +15,7 @@ public class Member {
     private String name;
     private Integer age;
 
-    private MemberRole role;
+    private Set<MemberRole> roles;
 
     public Integer getMemberId() {
         return memberId;
@@ -55,11 +57,12 @@ public class Member {
         this.name = name;
     }
 
-    public MemberRole getRole() {
-        return role;
+    public Set<MemberRole> getRoles() {
+        return roles;
     }
 
-    public void setRole(MemberRole role) {
-        this.role = role;
+    public void setRoles(Set<MemberRole> roles) {
+        this.roles = roles;
     }
 }
+
