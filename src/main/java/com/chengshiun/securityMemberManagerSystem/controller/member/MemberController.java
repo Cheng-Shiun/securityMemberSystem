@@ -48,7 +48,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(member);
     }
 
-    //刪除會員資料 (刪除資料的權限角色為 所有角色)
+    //刪除會員資料 (刪除資料的權限角色為 ADMIN)
     @DeleteMapping("/member/delete/{memberId}")
     public ResponseEntity<?> deleteMember(@PathVariable Integer memberId) {
         memberService.deleteMemberById(memberId);

@@ -16,7 +16,7 @@ public class Member {
     private String name;
     private Integer age;
 
-    private List<Role> roles;
+    private List<String> roleNames;
 
     public Integer getMemberId() {
         return memberId;
@@ -58,12 +58,12 @@ public class Member {
         this.name = name;
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    public List<String> getRoleNames() {
+        return roleNames;
     }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
+    public void setRoleNames(List<String> roleNames) {
+        this.roleNames = roleNames;
     }
 }
 

@@ -33,8 +33,8 @@ public class MemberDaoImpl implements MemberDao{
     public Member getMemberById(Integer memberId) {
         String sql = """
                 SELECT member.member_id, member.email, member.password, member.name, member.age, role.role_name FROM member
-                JOIN member_has_role ON member.member_id = member_has_role.member_id
-                JOIN role ON member_has_role.role_id = role.role_id
+                LEFT JOIN member_has_role ON member.member_id = member_has_role.member_id
+                LEFT JOIN role ON member_has_role.role_id = role.role_id
                 WHERE member.member_id = :memberId
                 """;
         Map<String, Object> map = new HashMap<>();
