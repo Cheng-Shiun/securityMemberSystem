@@ -66,4 +66,9 @@ public class MemberServiceImpl implements MemberService{
 
         return updatedMember;
     }
+
+    @Override
+    public void deleteMemberById(Integer memberId) {
+        memberDao.deleteMemberById(memberId);
+    }
 }

@@ -57,7 +57,7 @@ public class MySecurityConfig {
                 //設定 api 訪問是否認證
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/member/register").permitAll()
-                        .requestMatchers("/member/getMember/*").hasRole("ADMIN")
+                        .requestMatchers("/member/getMember/*", "/member/delete/*").hasRole("ADMIN")
                         .requestMatchers( "/member/update/*").hasAnyRole("ADMIN", "NORMAL_MEMBER", "VIP_MEMBER")
                         .anyRequest().authenticated()
                 )

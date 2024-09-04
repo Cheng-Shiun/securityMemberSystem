@@ -29,16 +29,30 @@ public class MemberController {
     //查詢會員帳號
     @GetMapping("/member/getMember/{memberId}")
     public ResponseEntity<Member> getMember(@PathVariable Integer memberId) {
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.getMemberById(memberId));
+        Member member = memberService.getMemberById(memberId);
+
+        if (member == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(member);
+        }
     }
 
-    //修改會員資料(密碼、姓名、年齡) (修改角色資料需為 ROLE_ADMIN 才能使用)
+    //修改會員資料(密碼、姓名、年齡) (修改資料的權限角色為 所有角色)
+    //(修改 member_has_role table 數據的權限角色需為 ROLE_ADMIN)
     @PutMapping("/member/update/{memberId}")
     public ResponseEntity<?> updateMember(@PathVariable Integer memberId,
                                           @RequestBody MemberUpdateRequest memberUpdateRequest) {
-
         Member member = memberService.updateMember(memberId, memberUpdateRequest);
 
         return ResponseEntity.status(HttpStatus.OK).body(member);
+    }
+
+    //刪除會員資料 (刪除資料的權限角色為 所有角色)
+    @DeleteMapping("/member/delete/{memberId}")
+    public ResponseEntity<?> deleteMember(@PathVariable Integer memberId) {
+        memberService.deleteMemberById(memberId);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

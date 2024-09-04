@@ -126,4 +126,15 @@ public class MemberDaoImpl implements MemberDao{
 
         return roleList;
     }
+
+    @Override
+    public void deleteMemberById(Integer memberId) {
+        String sql = """
+                DELETE FROM member WHERE member_id = :memberId
+                """;
+        Map<String, Object> map = new HashMap<>();
+        map.put("memberId", memberId);
+
+        namedParameterJdbcTemplate.update(sql, map);
+    }
 }

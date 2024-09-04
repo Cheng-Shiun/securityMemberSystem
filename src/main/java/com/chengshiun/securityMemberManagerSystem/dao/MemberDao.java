@@ -18,4 +18,6 @@ public interface MemberDao {
     Member updateMember(Integer memberId, MemberUpdateRequest memberUpdateRequest);
 
     List<Role> getRolesByMemberId(Integer memberId);
+
+    void deleteMemberById(Integer memberId);
 }

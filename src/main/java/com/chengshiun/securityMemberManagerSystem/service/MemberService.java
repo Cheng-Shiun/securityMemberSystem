@@ -11,4 +11,6 @@ public interface MemberService {
     Integer register(MemberRegisterRequest memberRegisterRequest);
 
     Member updateMember(Integer memberId, MemberUpdateRequest memberUpdateRequest);
+
+    void deleteMemberById(Integer memberId);
 }
