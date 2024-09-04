@@ -1,20 +1,20 @@
-package com.chengshiun.securityMemberManagerSystem.service;
+package com.chengshiun.securityMemberManagerSystem.service.impl;
 
 import com.chengshiun.securityMemberManagerSystem.dao.MemberDao;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberRegisterRequest;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberUpdateRequest;
 import com.chengshiun.securityMemberManagerSystem.model.Member;
+import com.chengshiun.securityMemberManagerSystem.service.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService {
 
     private final static Logger log = LoggerFactory.getLogger(MemberServiceImpl.class);
 

@@ -1,5 +1,6 @@
-package com.chengshiun.securityMemberManagerSystem.dao;
+package com.chengshiun.securityMemberManagerSystem.dao.impl;
 
+import com.chengshiun.securityMemberManagerSystem.dao.MemberDao;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberRegisterRequest;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberUpdateRequest;
 import com.chengshiun.securityMemberManagerSystem.model.Member;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class MemberDaoImpl implements MemberDao{
+public class MemberDaoImpl implements MemberDao {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
