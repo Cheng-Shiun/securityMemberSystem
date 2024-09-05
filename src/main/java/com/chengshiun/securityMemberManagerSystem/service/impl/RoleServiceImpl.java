@@ -28,6 +28,8 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private MemberDao memberDao;
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public Member addRoleToMember(Integer memberId, Integer roleId) {
         //檢查該 member 是否存在
@@ -66,6 +68,7 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Override
     public void deleteRole(Integer memberId, Integer roleId) {
         roleDao.deleteRole(memberId, roleId);
