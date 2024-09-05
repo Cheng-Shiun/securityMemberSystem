@@ -94,22 +94,39 @@ public class MemberDaoImpl implements MemberDao {
     }
 
     @Override
-    public Member updateMember(Integer memberId, MemberUpdateRequest memberUpdateRequest) {
-        String sql = """
-                UPDATE member
-                SET password = :password, name = :name, age = :age
-                WHERE member_id = :memberId
-                """;
+    public Member updateMember(String username, MemberUpdateRequest memberUpdateRequest) {
+        //使用 StringBuilder 動態擴充 sql 語法
+        StringBuilder sql = new StringBuilder("UPDATE member SET ");
         Map<String, Object> map = new HashMap<>();
-        map.put("password", memberUpdateRequest.getPassword());
-        map.put("name", memberUpdateRequest.getName());
-        map.put("age", memberUpdateRequest.getAge());
-        map.put("memberId", memberId);
 
-        namedParameterJdbcTemplate.update(sql, map);
+        //處理請求參數是否有更新值
+        if (memberUpdateRequest.getPassword() != null) {
+            sql.append("password = :password, ");
+            map.put("password", memberUpdateRequest.getPassword());
+        }
+        if (memberUpdateRequest.getName() != null) {
+            sql.append("name = :name, ");
+            map.put("name", memberUpdateRequest.getName());
+        }
+        if (memberUpdateRequest.getAge() != null) {
+            sql.append("age = :age, ");
+            map.put("age", memberUpdateRequest.getAge());
+        }
+
+        //刪除最後兩個逗號和空格
+        int length = sql.length();
+        if (length > 0 && sql.substring(length - 2).equals(", ")) {
+            sql.setLength(length - 2);
+        }
+
+        //添加 WHERE 語句 email值為 使用者的username
+        sql.append(" WHERE email = :email");
+        map.put("email", username);
+
+        namedParameterJdbcTemplate.update(sql.toString(), map);
 
         //回傳更新後的數據給前端
-        return getMemberById(memberId);
+        return getMemberByEmail(username);
     }
 
     @Override

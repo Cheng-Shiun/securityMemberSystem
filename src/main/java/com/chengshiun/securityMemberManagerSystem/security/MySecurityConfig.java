@@ -60,7 +60,7 @@ public class MySecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/member/register").permitAll()
                         .requestMatchers("/member/getMember/*", "/member/delete/*").hasRole("ADMIN")
-                        .requestMatchers( "/member/update/*").hasAnyRole("ADMIN", "NORMAL_MEMBER", "VIP_MEMBER")
+                        .requestMatchers( "/member/update").hasAnyRole("ADMIN", "NORMAL_MEMBER", "VIP_MEMBER")
                         .anyRequest().authenticated()
                 )
 

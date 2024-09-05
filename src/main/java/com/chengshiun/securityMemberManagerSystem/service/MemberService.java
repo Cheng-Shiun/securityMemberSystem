@@ -10,7 +10,7 @@ public interface MemberService {
 
     Integer register(MemberRegisterRequest memberRegisterRequest);
 
-    Member updateMember(Integer memberId, MemberUpdateRequest memberUpdateRequest);
+    Member updateMember(String username, MemberUpdateRequest memberUpdateRequest);
 
     void deleteMemberById(Integer memberId);
 }

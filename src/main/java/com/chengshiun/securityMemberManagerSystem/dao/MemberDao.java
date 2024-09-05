@@ -15,7 +15,7 @@ public interface MemberDao {
 
     Integer createMember(MemberRegisterRequest memberRegisterRequest);
 
-    Member updateMember(Integer memberId, MemberUpdateRequest memberUpdateRequest);
+    Member updateMember(String username, MemberUpdateRequest memberUpdateRequest);
 
     List<Role> getRolesByMemberId(Integer memberId);
 

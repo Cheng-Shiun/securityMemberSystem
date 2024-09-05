@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 
 public class MemberUpdateRequest {
 
-    @NotBlank
     private String password;
 
     private String name;

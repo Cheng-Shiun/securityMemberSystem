@@ -100,7 +100,7 @@ public class securityMemberManagementSystemApplicationTests {
         String json = objectMapper.writeValueAsString(memberUpdateRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .put("/member/update/{memberId}", 1)
+                .put("/member/update")
                 .with(httpBasic("test3@gmail.com", "333"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
@@ -122,7 +122,7 @@ public class securityMemberManagementSystemApplicationTests {
         String json = objectMapper.writeValueAsString(memberUpdateRequest);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .put("/member/update/{memberId}", 1)
+                .put("/member/update")
                 .with(httpBasic("test3@gmail.com", "333"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json);

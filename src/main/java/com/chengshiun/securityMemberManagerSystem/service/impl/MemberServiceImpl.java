@@ -49,20 +49,19 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member updateMember(Integer memberId, MemberUpdateRequest memberUpdateRequest) {
-        //查詢是否有該筆會員數據
-        Member existingMember = memberDao.getMemberById(memberId);
-        if (existingMember == null) {
-            log.warn("該 member {} 不存在", memberId);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    public Member updateMember(String username, MemberUpdateRequest memberUpdateRequest) {
+
+
+        //判斷前端有要更新密碼
+        if (memberUpdateRequest.getPassword() != null) {
+
+            //修改密碼需經過加密，再存入資料庫中
+            String hashedPassword = passwordEncoder.encode(memberUpdateRequest.getPassword());
+            memberUpdateRequest.setPassword(hashedPassword);
         }
 
-        //修改密碼則也要經過加密，再存入資料庫中
-        String hashedPassword = passwordEncoder.encode(memberUpdateRequest.getPassword());
-        memberUpdateRequest.setPassword(hashedPassword);
 
-        Member updatedMember = memberDao.updateMember(memberId, memberUpdateRequest);
-
+        Member updatedMember = memberDao.updateMember(username, memberUpdateRequest);
 
         return updatedMember;
     }

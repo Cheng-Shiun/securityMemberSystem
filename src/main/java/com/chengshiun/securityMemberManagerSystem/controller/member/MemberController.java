@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,10 +41,13 @@ public class MemberController {
 
     //修改會員資料(密碼、姓名、年齡) (修改資料的權限角色為 所有角色)
     //(修改 member_has_role table 數據的權限角色需為 ROLE_ADMIN)
-    @PutMapping("/member/update/{memberId}")
-    public ResponseEntity<?> updateMember(@PathVariable Integer memberId,
+    @PutMapping("/member/update")
+    public ResponseEntity<?> updateMember(Authentication authentication,
                                           @RequestBody MemberUpdateRequest memberUpdateRequest) {
-        Member member = memberService.updateMember(memberId, memberUpdateRequest);
+        //取得使用者的帳號
+        String username = authentication.getName();
+
+        Member member = memberService.updateMember(username, memberUpdateRequest);
 
         return ResponseEntity.status(HttpStatus.OK).body(member);
     }
