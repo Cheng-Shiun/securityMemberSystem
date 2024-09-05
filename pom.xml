@@ -9,11 +9,11 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>com.kucw.security</groupId>
+    <groupId>com.chengshiun</groupId>
     <artifactId>securityMemberManagementSystem</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>lesson-5-1</name>
-    <description>Spring Security Course lesson-5-1</description>
+    <name>securityMemberManagementSystem</name>
+    <description>securityMemberManagementSystem</description>
 
     <properties>
         <java.version>17</java.version>
@@ -51,6 +51,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
         <!-- Spring Security 專屬的單元測試 -->

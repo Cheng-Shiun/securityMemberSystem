@@ -9,9 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.UUID;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -23,6 +27,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Autowired
     private MemberDao memberDao;
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Override
     public Member getMemberById(Integer memberId) {
@@ -69,5 +76,42 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void deleteMemberById(Integer memberId) {
         memberDao.deleteMemberById(memberId);
+    }
+
+    @Override
+    public String forgotPassword(String email) {
+        Member member = memberDao.getMemberByEmail(email);
+
+        //判斷 member 是否存在
+        if (member == null) {
+            throw new IllegalArgumentException("member 不存在");
+        } else {
+            String resetToken = generateResetToken();
+
+            //發送重置密碼的驗證信給 member
+            String resetLink = String.format("https://example.com/reset-password?token=%s", resetToken);
+
+            //執行發信
+            sendPasswordResetEmail(email, resetLink);
+
+            System.out.println("重置密碼的驗證信連結為: " + resetLink);
+
+            return resetToken;
+        }
+    }
+
+    //生成 Token
+    private String generateResetToken() {
+        return UUID.randomUUID().toString();
+    }
+
+    //自定義 寄信方法
+    public void sendPasswordResetEmail(String to, String resetLink) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("密碼更改 Password Reset Request");
+        message.setText("Please click the following link to reset your password:\n" + resetLink);
+
+        mailSender.send(message);
     }
 }

@@ -13,4 +13,6 @@ public interface MemberService {
     Member updateMember(String username, MemberUpdateRequest memberUpdateRequest);
 
     void deleteMemberById(Integer memberId);
+
+    String forgotPassword(String email);
 }

@@ -59,4 +59,24 @@ public class MemberController {
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    //會員忘記密碼
+    @PostMapping("/member/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+        try {
+            //會員取得 Token
+            String resetToken = memberService.forgotPassword(email);
+
+            //返回提示訊息
+            String responseMessage = String.format("密碼重置信已寄出至 %s", email);
+
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
+
+    //會員接受到認證信 重置密碼
+
 }
