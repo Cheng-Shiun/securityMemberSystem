@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,6 +27,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class MySecurityConfig {
 
     //創建使用 BCrypt 演算法加密 password
@@ -57,7 +59,7 @@ public class MySecurityConfig {
                 //設定 api 訪問是否認證
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/member/register").permitAll()
-                        .requestMatchers("/member/getMember/*", "/member/delete/*", "/member/*/roles").hasRole("ADMIN")
+                        .requestMatchers("/member/getMember/*", "/member/delete/*").hasRole("ADMIN")
                         .requestMatchers( "/member/update/*").hasAnyRole("ADMIN", "NORMAL_MEMBER", "VIP_MEMBER")
                         .anyRequest().authenticated()
                 )
