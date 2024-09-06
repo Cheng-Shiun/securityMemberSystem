@@ -1,6 +1,7 @@
 package com.chengshiun.securityMemberManagerSystem.dao;
 
 import com.chengshiun.securityMemberManagerSystem.dto.MemberRegisterRequest;
+import com.chengshiun.securityMemberManagerSystem.dto.MemberResetPasswordRequest;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberUpdateRequest;
 import com.chengshiun.securityMemberManagerSystem.model.Member;
 import com.chengshiun.securityMemberManagerSystem.model.Role;
@@ -20,4 +21,6 @@ public interface MemberDao {
     List<Role> getRolesByMemberId(Integer memberId);
 
     void deleteMemberById(Integer memberId);
+
+    void resetPassword(String username, MemberResetPasswordRequest memberResetPasswordRequest);
 }

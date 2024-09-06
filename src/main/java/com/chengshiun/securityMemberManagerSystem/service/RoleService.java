@@ -9,4 +9,5 @@ public interface RoleService {
     Member updateRole(Integer memberId, Integer roleId);
 
     void deleteRole(Integer memberId, Integer roleId);
+
 }

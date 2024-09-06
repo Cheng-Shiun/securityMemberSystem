@@ -1,9 +1,12 @@
 package com.chengshiun.securityMemberManagerSystem.service.impl;
 
 import com.chengshiun.securityMemberManagerSystem.dao.MemberDao;
+import com.chengshiun.securityMemberManagerSystem.dao.TokenDao;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberRegisterRequest;
+import com.chengshiun.securityMemberManagerSystem.dto.MemberResetPasswordRequest;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberUpdateRequest;
 import com.chengshiun.securityMemberManagerSystem.model.Member;
+import com.chengshiun.securityMemberManagerSystem.model.Token;
 import com.chengshiun.securityMemberManagerSystem.service.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -27,6 +33,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Autowired
     private MemberDao memberDao;
+
+    @Autowired
+    private TokenDao tokenDao;
+
+    private static final long EXPIRATION_TIME_SECONDS = 30;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -86,23 +97,57 @@ public class MemberServiceImpl implements MemberService {
         if (member == null) {
             throw new IllegalArgumentException("member 不存在");
         } else {
-            String resetToken = generateResetToken();
+            //返回 Token value 與 created_date 給前端
+            Token resetToken = new Token();
+            resetToken.setValue(generateResetToken());
+            resetToken.setCreated_date(generateCreatedDate());
+            tokenDao.saveToken(email, resetToken);
 
-            //發送重置密碼的驗證信給 member
-            String resetLink = String.format("https://example.com/reset-password?token=%s", resetToken);
+            //執行發信 暫用 response body 取代 收信夾
+//            sendPasswordResetEmail(email, resetLink);
 
-            //執行發信
-            sendPasswordResetEmail(email, resetLink);
-
-            System.out.println("重置密碼的驗證信連結為: " + resetLink);
-
-            return resetToken;
+            return resetToken.getValue();
         }
     }
 
-    //生成 Token
+    @Override
+    public String resetPassword(String email, String token, MemberResetPasswordRequest memberResetPasswordRequest) {
+        //檢查 token 是否還在期限內 -> 可使用
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
+        LocalDateTime tokenCreatedDate = tokenDao.getCreatedDateByValue(email, token);
+
+        Duration duration = Duration.between(tokenCreatedDate, currentDateTime);
+        long secondsBetween = duration.getSeconds();
+
+        if (secondsBetween > 10) {            // 假設只有設定 10 秒的期限
+            throw new IllegalArgumentException("Token 已經過期");
+        }
+
+        //檢查前端的 token 與 member 的 token
+        if (token.equals(tokenDao.getValueByEmail(email))) {
+            //將新密碼加密
+            String hashedPassword = passwordEncoder.encode(memberResetPasswordRequest.getNewPassword());
+            memberResetPasswordRequest.setNewPassword(hashedPassword);
+
+            memberDao.resetPassword(email, memberResetPasswordRequest);
+            return "密碼更改成功，請使用新密碼重新登入！";
+        }else {
+            System.out.println("token:" + token);
+            System.out.println("資料庫中的該 member token 值為:" + tokenDao.getValueByEmail(email));
+          throw new IllegalArgumentException("驗證 member email 錯誤");
+        }
+    }
+
+    //自定義生成 Token
     private String generateResetToken() {
         return UUID.randomUUID().toString();
+    }
+
+    //自定義生成時間
+    private Date generateCreatedDate() {
+        Date now = new Date();
+        return now;
     }
 
     //自定義 寄信方法
@@ -114,4 +159,6 @@ public class MemberServiceImpl implements MemberService {
 
         mailSender.send(message);
     }
+
+
 }

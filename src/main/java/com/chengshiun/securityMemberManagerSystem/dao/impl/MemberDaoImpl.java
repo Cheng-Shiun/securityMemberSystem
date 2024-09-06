@@ -2,6 +2,7 @@ package com.chengshiun.securityMemberManagerSystem.dao.impl;
 
 import com.chengshiun.securityMemberManagerSystem.dao.MemberDao;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberRegisterRequest;
+import com.chengshiun.securityMemberManagerSystem.dto.MemberResetPasswordRequest;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberUpdateRequest;
 import com.chengshiun.securityMemberManagerSystem.model.Member;
 import com.chengshiun.securityMemberManagerSystem.model.Role;
@@ -152,6 +153,17 @@ public class MemberDaoImpl implements MemberDao {
                 """;
         Map<String, Object> map = new HashMap<>();
         map.put("memberId", memberId);
+
+        namedParameterJdbcTemplate.update(sql, map);
+    }
+
+    @Override
+    public void resetPassword(String username, MemberResetPasswordRequest memberResetPasswordRequest) {
+        String sql = "UPDATE member SET password = :password WHERE email = :email";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("password", memberResetPasswordRequest.getNewPassword());
+        map.put("email", username);
 
         namedParameterJdbcTemplate.update(sql, map);
     }

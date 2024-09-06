@@ -1,6 +1,7 @@
 package com.chengshiun.securityMemberManagerSystem.controller.member;
 
 import com.chengshiun.securityMemberManagerSystem.dto.MemberRegisterRequest;
+import com.chengshiun.securityMemberManagerSystem.dto.MemberResetPasswordRequest;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberUpdateRequest;
 import com.chengshiun.securityMemberManagerSystem.model.Member;
 import com.chengshiun.securityMemberManagerSystem.service.MemberService;
@@ -62,13 +63,17 @@ public class MemberController {
 
     //會員忘記密碼
     @PostMapping("/member/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
         try {
-            //會員取得 Token
-            String resetToken = memberService.forgotPassword(email);
-
             //返回提示訊息
-            String responseMessage = String.format("密碼重置信已寄出至 %s", email);
+            String responseMessage = String.format("密碼重置信已寄出至 %s\n", email);
+
+            //暫用 response body 取代 member 的收信匣
+            //會員取得 reset-password 驗證連結
+            String url = "https://example.com/reset-password?token=" + memberService.forgotPassword(email);
+            responseMessage = responseMessage + "重置密碼的驗證信連結: " + url;
+
+            responseMessage = responseMessage + "\n請於24小時內更改密碼";
 
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
 
@@ -77,6 +82,19 @@ public class MemberController {
         }
     }
 
-    //會員接受到認證信 重置密碼
+    //會員收到驗證認證信 重置密碼
+    @PutMapping("/member/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam String email,
+                                           @RequestParam String token,
+                                           @RequestBody MemberResetPasswordRequest memberResetPasswordRequest) {
+        //驗證 Token k的生成時間
+        try {
+            memberService.resetPassword(email, token, memberResetPasswordRequest);
+
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Password reset successful");
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
 
 }
