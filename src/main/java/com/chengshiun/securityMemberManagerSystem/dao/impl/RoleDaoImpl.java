@@ -1,6 +1,8 @@
 package com.chengshiun.securityMemberManagerSystem.dao.impl;
 
 import com.chengshiun.securityMemberManagerSystem.dao.RoleDao;
+import com.chengshiun.securityMemberManagerSystem.model.Role;
+import com.chengshiun.securityMemberManagerSystem.rowmapper.RoleRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -14,6 +16,9 @@ public class RoleDaoImpl implements RoleDao {
 
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Autowired
+    private RoleRowMapper roleRowMapper;
 
     @Override
     public void addRoleToMember(Integer memberId, Integer roleId) {
@@ -60,6 +65,33 @@ public class RoleDaoImpl implements RoleDao {
         Map<String, Object> map = new HashMap<>();
         map.put("memberId", memberId);
         map.put("roleId" , roleId);
+
+        namedParameterJdbcTemplate.update(sql, map);
+    }
+
+    @Override
+    public Role getRoleByName(String roleName) {
+        String sql = "SELECT role_id, role_name FROM role WHERE role_name = :roleName";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("roleName", roleName);
+
+        List<Role> roleList = namedParameterJdbcTemplate.query(sql, map, roleRowMapper);
+
+        if (roleList != null) {
+            return roleList.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void addRoleForMemberId(Integer memberId, Role role) {
+        String sql = "INSERT INTO member_has_role(member_id, role_id) VALUES (:memberId, :roleId)";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("memberId", memberId);
+        map.put("roleId", role.getRoleId());
 
         namedParameterJdbcTemplate.update(sql, map);
     }

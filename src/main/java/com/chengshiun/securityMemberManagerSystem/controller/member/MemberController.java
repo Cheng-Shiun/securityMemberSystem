@@ -4,7 +4,9 @@ import com.chengshiun.securityMemberManagerSystem.dto.MemberRegisterRequest;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberResetPasswordRequest;
 import com.chengshiun.securityMemberManagerSystem.dto.MemberUpdateRequest;
 import com.chengshiun.securityMemberManagerSystem.model.Member;
+import com.chengshiun.securityMemberManagerSystem.model.Role;
 import com.chengshiun.securityMemberManagerSystem.service.MemberService;
+import com.chengshiun.securityMemberManagerSystem.service.RoleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +20,17 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private RoleService roleService;
+
     //註冊會員帳號
     @PostMapping("/member/register")
     public ResponseEntity<Member> register(@RequestBody @Valid MemberRegisterRequest memberRegisterRequest) {
         Integer memberId = memberService.register(memberRegisterRequest);
+
+        //預設給註冊成功的 member 添加 normal_member 的 role
+        Role normalMemberRole = roleService.getRoleByName("ROLE_NORMAL_MEMBER");
+        roleService.addRoleForMemberId(memberId, normalMemberRole);
 
         Member member = memberService.getMemberById(memberId);
 

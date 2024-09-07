@@ -1,5 +1,7 @@
 package com.chengshiun.securityMemberManagerSystem.dao;
 
+import com.chengshiun.securityMemberManagerSystem.model.Role;
+
 import java.util.List;
 
 public interface RoleDao {
@@ -10,4 +12,8 @@ public interface RoleDao {
     void updateRole(Integer memberId, Integer roleId);
 
     void deleteRole(Integer memberId, Integer roleId);
+
+    Role getRoleByName(String roleName);
+
+    void addRoleForMemberId(Integer memberId, Role role);
 }

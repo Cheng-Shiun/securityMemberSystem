@@ -3,6 +3,7 @@ package com.chengshiun.securityMemberManagerSystem.service.impl;
 import com.chengshiun.securityMemberManagerSystem.dao.MemberDao;
 import com.chengshiun.securityMemberManagerSystem.dao.RoleDao;
 import com.chengshiun.securityMemberManagerSystem.model.Member;
+import com.chengshiun.securityMemberManagerSystem.model.Role;
 import com.chengshiun.securityMemberManagerSystem.service.RoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,5 +73,15 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void deleteRole(Integer memberId, Integer roleId) {
         roleDao.deleteRole(memberId, roleId);
+    }
+
+    @Override
+    public Role getRoleByName(String roleName) {
+        return roleDao.getRoleByName(roleName);
+    }
+
+    @Override
+    public void addRoleForMemberId(Integer memberId, Role role) {
+        roleDao.addRoleForMemberId(memberId, role);
     }
 }
