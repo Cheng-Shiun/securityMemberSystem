@@ -74,7 +74,7 @@ public class MemberController {
     //會員忘記密碼
     @PostMapping("/member/forgot-password/{email}")
     public ResponseEntity<String> forgotPassword(@PathVariable String email) throws MessagingException {
-        System.out.println("Received email: " + email);
+
         try {
             //返回提示訊息
             String responseMessage = String.format("密碼重置信已寄出至 %s\n", email);
