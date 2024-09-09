@@ -8,12 +8,15 @@ import com.chengshiun.securityMemberManagerSystem.dto.MemberUpdateRequest;
 import com.chengshiun.securityMemberManagerSystem.model.Member;
 import com.chengshiun.securityMemberManagerSystem.model.Token;
 import com.chengshiun.securityMemberManagerSystem.service.MemberService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -92,7 +95,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public String forgotPassword(String email) {
         Member member = memberDao.getMemberByEmail(email);
-
+        System.out.println("會員數據:" + member);
         //判斷 member 是否存在
         if (member == null) {
             throw new IllegalArgumentException("member 不存在");
@@ -103,8 +106,10 @@ public class MemberServiceImpl implements MemberService {
             resetToken.setCreated_date(generateCreatedDate());
             tokenDao.saveToken(email, resetToken);
 
-            //執行發信 暫用 response body 取代 收信夾
-//            sendPasswordResetEmail(email, resetLink);
+            //執行發信
+            String message = "請點選以下驗證連結： https://www.example.com?token=" + resetToken.getValue();
+            message = message + "\n" + "請請於24小時內完成更改密碼，超過時間必須重新執行一次'忘記密碼'";
+            sendPasswordResetEmail(email, message);
 
             return resetToken.getValue();
         }
@@ -150,15 +155,30 @@ public class MemberServiceImpl implements MemberService {
         return now;
     }
 
-    //自定義 寄信方法
-    public void sendPasswordResetEmail(String to, String resetLink) {
+    //自定義寄信方法
+//    public void sendPasswordResetEmail(String to, String resetLink) throws MessagingException {
+//        MimeMessage mimeMessage = mailSender.createMimeMessage();
+//        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
+//
+//        helper.setTo(to);
+//        helper.setSubject("密碼更改 Password Reset Request");
+//        String emailContent = "<p>Please click the following link to reset your password: " +
+//                "<a href=\"https://www.example.com?token=" + resetLink + "\">Reset Password</a></p>" +
+//                "<p>請於 24 小時內更改密碼，超過時限須請您重新再執行一次忘記密碼功能。</p>";
+//        helper.setText(emailContent, true);
+//
+//        mailSender.send(mimeMessage);
+//    }
+
+    //自定義寄信方法
+    public void sendPasswordResetEmail(String to, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setFrom("debugcode2024@example.com");
         message.setTo(to);
-        message.setSubject("密碼更改 Password Reset Request");
-        message.setText("Please click the following link to reset your password:\n" + resetLink);
+        message.setSubject("Reset Password 更新密碼");
+        message.setText(text);
 
         mailSender.send(message);
     }
-
-
 }

@@ -7,6 +7,7 @@ import com.chengshiun.securityMemberManagerSystem.model.Member;
 import com.chengshiun.securityMemberManagerSystem.model.Role;
 import com.chengshiun.securityMemberManagerSystem.service.MemberService;
 import com.chengshiun.securityMemberManagerSystem.service.RoleService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,8 +72,9 @@ public class MemberController {
     }
 
     //會員忘記密碼
-    @PostMapping("/member/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+    @PostMapping("/member/forgot-password/{email}")
+    public ResponseEntity<String> forgotPassword(@PathVariable String email) throws MessagingException {
+        System.out.println("Received email: " + email);
         try {
             //返回提示訊息
             String responseMessage = String.format("密碼重置信已寄出至 %s\n", email);

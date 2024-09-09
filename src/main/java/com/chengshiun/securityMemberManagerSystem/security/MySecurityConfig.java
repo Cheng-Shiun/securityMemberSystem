@@ -48,7 +48,7 @@ public class MySecurityConfig {
 
                 //設定 CSRF 保護
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/member/register", "/member/forgot-password", "/member/reset-password")
+                        .ignoringRequestMatchers("/member/register", "/member/forgot-password/*", "/member/reset-password", "/hello", "/error")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(createCsrfHandler())
                 )
@@ -58,10 +58,10 @@ public class MySecurityConfig {
 
                 //設定 api 訪問是否認證
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/member/register", "/member/forgot-password", "/member/reset-password").permitAll()
+                        .requestMatchers("/member/register", "/member/forgot-password/*", "/member/reset-password/*","/hello", "/error").permitAll()
                         .requestMatchers("/member/getMember/*", "/member/delete/*").hasRole("ADMIN")
                         .requestMatchers( "/member/update").hasAnyRole("ADMIN", "NORMAL_MEMBER", "VIP_MEMBER")
-                        .anyRequest().authenticated()
+                        .anyRequest().denyAll()
                 )
 
                 //設定 CORS 保護
